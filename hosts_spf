@@ -1,0 +1,36 @@
+[db]
+10.238.239.114 hostname=spf-admin-test-db
+10.238.239.115 hostname=spf-seller-test-db
+
+[jenkins]
+10.238.239.119 hostname=spf-k8s-jenkins
+
+[redis_master]
+10.238.239.116 hostname=spf-test-base-01
+
+[redis_slave]
+10.238.239.117 hostname=spf-test-base-02
+10.238.239.118 hostname=spf-test-base-03
+
+[redis:children]
+redis_master
+redis_slave
+
+[rabbitmq_main]
+10.238.239.116 hostname=spf-test-base-01
+
+[rabbitmq_joiner]
+10.238.239.117 hostname=spf-test-base-02
+10.238.239.118 hostname=spf-test-base-03
+
+[rabbitmq:children]
+rabbitmq_main
+rabbitmq_joiner
+
+[redis:vars]
+redis_pass=yourpass
+
+[rabbitmq:vars]
+rabbitmq_user=admin
+rabbitmq_pass=yourpass
+

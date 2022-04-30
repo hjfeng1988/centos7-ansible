@@ -1,0 +1,14 @@
+- name: Install chrony
+  yum:
+    name: chrony
+    state: present
+
+- name: Enable services and start
+  systemd:
+    name: chronyd
+    state: started
+    enabled: yes
+
+- name: Synchronize time by chronyc
+  shell:
+    cmd: chronyc makestep

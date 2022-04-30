@@ -1,0 +1,13 @@
+---
+# tasks file for rabbitmq
+- import_tasks: erlang.yml
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- import_tasks: prepare.yml
+  become: yes
+  become_user: root
+  become_method: sudo
+  
+- import_tasks: rabbitmq.yml

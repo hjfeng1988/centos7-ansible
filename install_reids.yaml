@@ -1,0 +1,7 @@
+---
+- name: install redis play
+  hosts: redis
+  gather_facts: no
+  user: appman
+  roles:
+    - redis

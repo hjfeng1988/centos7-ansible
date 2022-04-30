@@ -1,0 +1,49 @@
+- name: Add new partition on device
+  parted:
+	device: "/dev/sdc"
+	number: "1"
+	part_type: primary
+	flags: [ lvm ]
+	state: present
+	part_end: "100%"
+	part_start: "0%"
+
+- name: create vg in host
+  lvg:
+   vg: vg1
+   pvs: /dev/sdc1
+
+- name: create lvs in host
+  lvol:
+	vg: vg1
+	lv: Lv1-web
+	size: 100%FREE
+	pvs: /dev/sdc1
+
+- name: create file system for lvs
+  filesystem:
+	fstype: xfs
+	dev: /dev/vg1/Lv1-web
+
+- name: mount lvs to lvs
+  mount:
+	path: /opt
+	src: /dev/vg1/Lv1-web
+	fstype: xfs
+	opts: defaults
+	state: mounted
+
+- name: change own of /opt
+  shell:
+    cmd: chown appman:appman /opt
+
+- name: create directory under /opt
+  file:
+    path: "/opt/{{item}}"
+    state: directory
+    owner: appman
+    group: appman
+    mode: 0744
+    recurse: yes
+  with_items:
+    - upload

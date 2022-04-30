@@ -1,0 +1,29 @@
+- name: create vg
+  lvg:
+    vg: vg1
+    pvs: /dev/sdb
+
+- name: create lv Lv1-web
+  lvol:
+    vg: vg1
+    lv: Lv1-web
+    size: 100%VG
+    pvs: /dev/sdb
+
+- name: mkfs
+  filesystem:
+    dev: /dev/vg1/Lv1-web
+    fstype: xfs
+
+- name: mount to /opt
+  mount:
+    path: /opt
+    src: /dev/vg1/Lv1-web
+    fstype: xfs
+    state: mounted
+
+- name: chown /opt
+  file:
+    path: /opt
+    owner: appman
+    group: appman

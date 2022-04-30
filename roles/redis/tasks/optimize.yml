@@ -1,0 +1,35 @@
+# optimize 1
+- name: add line in /etc/rc.local
+  blockinfile:
+    path: /etc/rc.local
+    block: |
+      echo 512 >  /proc/sys/net/core/somaxconn
+      echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+- name: chmod o+x to /etc/rc.local
+  file:
+    path: /etc/rc.local
+    mode: o+x
+
+- name: make rc.local effective immediately
+  shell:
+    cmd: |
+      echo 512 >  /proc/sys/net/core/somaxconn
+      echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+# optimize 2
+- name: add line in /etc/sysctl.d/91-redis.conf
+  lineinfile:
+    path: /etc/sysctl.d/91-redis.conf
+    line: "vm.overcommit_memory = 1"
+    create: yes
+
+- name: make sysctl.conf effective immediately
+  shell:
+    cmd: sysctl -p /etc/sysctl.d/91-redis.conf
+
+- name: set PATH
+  lineinfile:
+    path: /etc/profile.d/redis.sh
+    line: "PATH=$PATH:/opt/redis/bin"
+    create: yes

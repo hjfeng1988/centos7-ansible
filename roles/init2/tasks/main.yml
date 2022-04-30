@@ -1,0 +1,20 @@
+---
+# - import_tasks: lvm.yml
+- import_tasks: hostname.yml
+
+- import_tasks: ntpdate.yml
+- import_tasks: timezone.yml
+
+- import_tasks: pkg.yml
+- import_tasks: vim.yml
+
+- import_tasks: audit.yml
+- import_tasks: adduser.yml
+- import_tasks: root_pubkey.yml
+- import_tasks: sshd.yml
+
+- import_tasks: sysctl.yml
+- import_tasks: ulimit.yml
+
+- import_tasks: selinux.yml
+- import_tasks: service.yml

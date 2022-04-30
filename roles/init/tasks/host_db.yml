@@ -1,0 +1,28 @@
+- name: create vg
+  lvg:
+    vg: vg1
+    pvs: /dev/sdb
+
+- name: create lv Lv1-data
+  lvol:
+    vg: vg1
+    lv: Lv1-data
+    size: 100%FREE
+    pvs: /dev/sdb
+
+- name: mkfs
+  filesystem:
+    dev: /dev/vg1/Lv1-data
+    fstype: xfs
+
+- name: create directory /data
+  file:
+    path: /data
+    state: directory
+
+- name: mount to /data
+  mount:
+    path: /opt
+    src: /dev/vg1/Lv1-data
+    fstype: xfs
+    state: mounted

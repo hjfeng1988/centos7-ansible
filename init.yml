@@ -1,0 +1,10 @@
+---
+- name: play with role
+  hosts: all
+  gather_facts: no
+  user: appman
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles: 
+    - init

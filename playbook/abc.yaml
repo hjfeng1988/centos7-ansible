@@ -1,0 +1,9 @@
+---
+- hosts: rabbitmq
+  user: root
+  gather_facts: yes
+  tasks:
+    - name: debug1
+      debug:
+        #msg: "{{groups['rabbitmq_main'][0]}}"
+        msg: " {{ hostvars[groups['rabbitmq_main'][0]].hostname }} "

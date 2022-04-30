@@ -1,0 +1,33 @@
+- name: check if sentinel.log exists
+  stat:
+    path: /opt/redis/sentinel.log
+  register: redis_sentinel_rc1
+
+- name: replace mymaster in sentinel.conf
+  replace:
+    path: /opt/redis/sentinel.conf
+    regexp: "mymaster 127.0.0.1"
+    replace: "mymaster {{groups['redis_master'][0]}}"
+  when: 
+    - not redis_sentinel_rc1.stat.exists
+
+- name: add line to sentinel.conf
+  blockinfile:
+    path: /opt/redis/sentinel.conf
+    block: |
+      bind 0.0.0.0
+      daemonize yes
+      logfile /opt/redis/sentinel.log
+      sentinel auth-pass mymaster {{redis_pass}}
+  when:
+    - not redis_sentinel_rc1.stat.exists
+
+- name: check if redis-sentinel process is running
+  shell: ps -ef | grep -c redis-sentinel
+  register: redis_sentinel_rc2
+
+- name: start sentinel
+  shell:
+    cmd: /opt/redis/bin/redis-sentinel /opt/redis/sentinel.conf
+  when:
+    - redis_sentinel_rc2.stdout == '2'

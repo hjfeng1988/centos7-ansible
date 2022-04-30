@@ -1,0 +1,103 @@
+---
+# tasks file for init
+- name: install common tool
+  yum:
+    name: bash-completion, bind-utils, dos2unix, unzip, net-tools, telnet, wget, lrzsz, lvm2, vim, ntpdate
+
+#- name: Install performance tool
+#  yum:
+#    name: htop, iftop, lsof, sysstat, tcpdump, tmux, traceroute, tree
+
+- name: add in /etc/vimrc
+  blockinfile:
+    path: /etc/vimrc
+    block: |
+      set paste
+      set tabstop=4
+      set expandtab
+    marker: '" {mark} ANSIBLE MANAGED BLOCK'
+
+- name: set hostname
+  hostname:
+    name: "{{hostname}}"
+  when:
+    - hostname is defined
+
+- name: disable services and stop
+  systemd:
+    name: "{{item}}"
+    state: stopped
+    enabled: no
+  loop:
+    - firewalld
+    - postfix
+
+- name: disable selinux in config
+  selinux:
+    state: disabled
+
+- name: disable selinux on the fly
+  shell:
+    cmd: setenforce | grep Enforcing && setenforce 0 || true
+
+- name: set timezone to Asia/Shanghai
+  timezone:
+    name: Asia/Shanghai
+
+- name: set LANG to en_US.UTF-8
+  lineinfile:
+    path: /etc/locale.conf
+    regexp: '^LANG=.*'
+    line: 'LANG="en_US.UTF-8"' 
+
+- name: ntpdate time
+  shell:
+    cmd: ntpdate cn.pool.ntp.org
+
+- name: set owner
+  file:
+    path: "{{item}}"
+    state: directory
+    owner: appman
+    group: appman
+    mode: '0755'
+  loop:
+    - /opt
+    - /opt/src
+
+- name: mkdir /opt/src
+  file:
+    path: /opt/src
+    owner: appman
+    group: appman
+
+- name: create history directory
+  file:
+    path: /tmp/history
+    state: directory
+    mode: 0777
+
+- name: copy to /etc/profile.d/custom.sh
+  copy:
+    src: profile_custom.sh
+    dest: /etc/profile.d/custom.sh
+
+- name: copy to /etc/sysctl.d/90-sysctl.conf
+  copy:
+    src: 90-sysctl.conf
+    dest: /etc/sysctl.d
+
+- name: copy to /etc/security/limits.d/20-nproc.conf
+  copy:
+    src: 20-nproc.conf
+    dest: /etc/security/limits.d
+
+- name: make sysctl.conf effective immediately
+  shell:
+    cmd: sysctl -p
+
+- name: disable sshd dns
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '#UseDNS yes'
+    line: 'UseDNS no'

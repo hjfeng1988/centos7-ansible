@@ -1,0 +1,12 @@
+---
+- hosts: rabbitmq
+  user: root
+  gather_facts: no
+  tasks:
+    - name: set hosts
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ hostvars[item].ansible_ssh_host}} {{hostname}}"
+      when:
+        - hostname is defined
+      with_items: "{{ groups.all }}"

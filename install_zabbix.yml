@@ -1,0 +1,11 @@
+---
+- name: install zabbix play
+  hosts: all
+  gather_facts: yes
+  user: appman
+  become: yes
+  become_user: appman
+  become_method: sudo
+  roles:
+    #- zabbix
+    - zabbix-binary

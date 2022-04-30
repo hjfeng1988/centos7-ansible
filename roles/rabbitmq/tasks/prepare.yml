@@ -1,0 +1,8 @@
+#- name: set hosts
+# todo
+
+- name: set rabbitmq PATH
+  lineinfile:
+    path: /etc/profile.d/rabbitmq.sh
+    line: "PATH=$PATH:/opt/rabbitmq/sbin"
+    create: yes

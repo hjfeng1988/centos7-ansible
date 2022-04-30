@@ -1,0 +1,24 @@
+- name: install compile tool
+  yum:
+    name: gcc-c++, openssl-devel, ncurses-devel, unixODBC-devel
+
+- name: copy erlang to /opt/src
+  copy:
+    src: otp_src_20.1.tar.gz
+    dest: /opt/src/otp_src_20.1.tar.gz
+
+- name: install erlang
+  shell:
+    cmd: |
+      cd /opt/src
+      tar zxf otp_src_20.1.tar.gz
+      cd otp_src_20.1
+      ./configure --prefix=/usr/local/erlang --without-javac && make -j2 && make install
+  args:
+    creates: /usr/local/erlang
+
+- name: set PATH
+  lineinfile:
+    path: /etc/profile.d/erlang.sh
+    line: "PATH=$PATH:/usr/local/erlang/bin"
+    create: yes

@@ -1,0 +1,10 @@
+- name: ntpdate time
+  shell:
+    cmd: ntpdate 0.centos.pool.ntp.org
+
+- name: add to crontab
+  cron:
+    name: ntpdate
+    minute: 1
+    hour: 1
+    job: ntpdate 0.centos.pool.ntp.org

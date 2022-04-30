@@ -1,0 +1,37 @@
+- name: copy to /etc/profile.d/custom.sh
+  copy:
+    src: profile_custom.sh
+    dest: /etc/profile.d/custom.sh
+
+# audit depend on /etc/profile.d/custom.sh set variable HISTTIMEFORMAT.
+- name: audit:copy cmd_log.sh to /etc/profile.d
+  copy:
+    src: audit_cmd_log.sh
+    dest: /etc/profile.d/cmd_log.sh
+
+# cmd_log.sh将local1.notice等级日志以logger方式记录到/etc/rsyslog.conf 
+# local1.none不记录到/etc/rsyslog.conf
+- name: audit:replace line in /etc/rsyslog.conf
+  lineinfile:
+    path: /etc/rsyslog.conf
+    line: '*.info;mail.none;authpriv.none;cron.none;local1.none    /var/log/messages'
+    regexp: '\*.info;mail.none;authpriv.none;cron.none                /var/log/messages'
+
+# local1.notice单独记录到/var/log/cmd.log
+- name: audit:add line in /etc/rsyslog.conf
+  lineinfile:
+    path: /etc/rsyslog.conf
+    line: 'local1.notice                                           /var/log/cmd.log'
+    insertafter: 'local7.*'
+
+- name: audit:systemctl restart rsyslog
+  systemd:
+    name: rsyslog
+    state: restarted
+
+# /var/log/cmd.log日志轮替
+- name: audit:copy cmd_log to /etc/logrotate.d
+  vars:
+  copy:
+    src: audit_cmd_log
+    dest: /etc/logrotate.d/cmd_log

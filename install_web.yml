@@ -1,0 +1,12 @@
+---
+- name: install web play
+  hosts: web
+  gather_facts: no
+  user: appman
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - web
+  tasks:
+    - import_tasks: playbook/jdk.yml

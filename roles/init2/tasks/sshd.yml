@@ -1,0 +1,28 @@
+# Uncomment disable password and root login need to adduser first.
+# - name: sshd:disable PasswordAuthentication
+  # lineinfile:
+    # path: /etc/ssh/sshd_config
+    # line: "PasswordAuthentication no"
+    # state: present
+  # notify: systemctl reload sshd
+
+# - name: sshd:disable ChallengeResponseAuthentication
+  # lineinfile:
+    # path: /etc/ssh/sshd_config
+    # line: "ChallengeResponseAuthentication no"
+    # state: present
+  # notify: systemctl reload sshd
+
+# - name: sshd:disable PermitRootLogin
+  # lineinfile:
+    # path: /etc/ssh/sshd_config
+    # line: "PermitRootLogin no"
+    # state: present
+  # notify: systemctl reload sshd
+
+- name: sshd:diable UseDNS
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: "UseDNS no"
+    state: present
+  notify: systemctl reload sshd

@@ -1,0 +1,10 @@
+---
+- name: install jdk play
+  hosts: jenkins
+  gather_facts: no
+  user: appman
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - import_tasks: playbook/jdk.yml

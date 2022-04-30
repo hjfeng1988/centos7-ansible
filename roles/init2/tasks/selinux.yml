@@ -1,0 +1,9 @@
+- name: Disable selinux on the fly
+  shell:
+  #  cmd: setenforce | grep Enforcing && setenforce 0 || true
+     cmd: setenforce 0
+  ignore_errors: true
+
+- name: Disable selinux in config
+  selinux:
+    state: disabled

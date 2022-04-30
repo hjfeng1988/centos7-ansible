@@ -1,0 +1,7 @@
+---
+- name: install rabbitmq play
+  hosts: rabbitmq
+  gather_facts: no
+  user: appman
+  roles:
+    - rabbitmq

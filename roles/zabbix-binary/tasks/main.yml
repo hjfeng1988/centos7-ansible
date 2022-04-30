@@ -1,0 +1,55 @@
+---
+# tasks file for zabbix
+- name: copy to /opt/zabbix
+  copy:
+    src: zabbix
+    dest: /opt
+    mode: 0775
+
+- name: copy to /opt/zabbix/etc/zabbix_agentd.conf
+  template:
+    src: zabbix_agentd.conf
+    dest: /opt/zabbix/etc/zabbix_agentd.conf
+
+- name: create directory /opt/zabbix/script
+  file:
+    path: /opt/zabbix/script
+    state: directory
+  when: inventory_hostname in groups['web']
+
+- name: copy to /opt/zabbix/script/discovertport.sh
+  copy:
+    src: discovertport.sh
+    dest: /opt/zabbix/script/discovertport.sh
+    mode: 0775
+  when: inventory_hostname in groups['web']
+
+- name: copy to /opt/zabbix/etc/zabbix_agentd.conf.d/port.conf
+  template:
+    src: port.conf
+    dest: /opt/zabbix/etc/zabbix_agentd.conf.d/port.conf
+  when: inventory_hostname in groups['web']
+
+- name: copy to /opt/zabbix/etc/zabbix_agentd.conf.d/java.conf
+  template:
+    src: java.conf
+    dest: /opt/zabbix/etc/zabbix_agentd.conf.d/java.conf
+  when: inventory_hostname in groups['web']
+
+- name: copy to /opt/zabbix/lib/cmdline-jmxclient-0.10.3.jar
+  copy:
+    src: cmdline-jmxclient-0.10.3.jar
+    dest: /opt/zabbix/lib/cmdline-jmxclient-0.10.3.jar
+  when: inventory_hostname in groups['web']
+
+- name: copy to /opt/zabbix/etc/zabbix_agentd.conf.d/mysql.conf
+  copy:
+    src: mysql.conf
+    dest: /opt/zabbix/etc/zabbix_agentd.conf.d/mysql.conf
+  when: inventory_hostname in groups['db']
+
+- name: restart zabbix
+  shell:
+    cmd: |
+      pkill -9 zabbix_agentd
+      /opt/zabbix/sbin/zabbix_agentd

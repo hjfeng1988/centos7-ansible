@@ -1,0 +1,25 @@
+---
+# tasks file for jdk
+- name: copy jdk.tar.gz to /opt/src
+  vars:
+    version: "8u152"
+  copy:
+    src: jdk-{{ version }}-linux-x64.tar.gz
+    dest: /opt/src
+
+- name: install jdk
+  vars:
+    version: "8u152"
+    version2: "1.8.0_152"
+  shell:
+    cmd: |
+      cd /opt/src
+      tar -zxf jdk-{{ version }}-linux-x64.tar.gz
+      mv jdk{{ version2 }} /opt/jdk
+  args:
+    creates: /opt/jdk
+
+- name: copy jdk.sh to /etc/profile.d
+  copy:
+    src: jdk.sh
+    dest: /etc/profile.d

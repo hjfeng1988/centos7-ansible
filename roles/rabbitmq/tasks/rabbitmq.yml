@@ -1,0 +1,52 @@
+- name: copy rabbitmq to /opt/src
+  copy:
+    src: rabbitmq-server-generic-unix-3.6.14.tar.xz
+    dest: /opt/src/rabbitmq-server-generic-unix-3.6.14.tar.xz
+
+- name: unarchive rabbitmq to /opt/rabbitmq
+  shell:
+    cmd: |
+      cd /opt/src
+      tar xf rabbitmq-server-generic-unix-3.6.14.tar.xz
+      mv rabbitmq_server-3.6.14 /opt/rabbitmq
+  args:
+    creates: /opt/rabbitmq
+
+- name: copy .erlang.cookie
+  copy:
+    src: erlang.cookie
+    dest: /home/appman/.erlang.cookie
+    mode: 0400
+
+- name: check if /opt/rabbitmq/var exists
+  stat:
+    path: /opt/rabbitmq/var
+  register: rabbitmq_rc1
+
+- name: start rabbitmq main
+  shell:
+    cmd: |
+      rabbitmq-server -detached
+      sleep 3
+      rabbitmq-plugins enable rabbitmq_management
+      rabbitmqctl add_user {{ rabbitmq_user }} {{ rabbitmq_pass }}
+      rabbitmqctl set_user_tags {{ rabbitmq_user }} administrator
+      rabbitmqctl set_permissions -p "/" {{ rabbitmq_user }} ".*" ".*" ".*"
+  when:
+    - inventory_hostname in groups['rabbitmq_main']
+    - not rabbitmq_rc1.stat.exists
+
+
+- name: start rabbitmq joiner
+  shell:
+    cmd: |
+      rabbitmq-server -detached
+      sleep 3
+      rabbitmq-plugins enable rabbitmq_management
+      rabbitmqctl stop_app
+      rabbitmqctl reset
+      rabbitmqctl join_cluster rabbit@{{ hostvars[groups['rabbitmq_main'][0]].hostname }}
+      rabbitmqctl start_app
+  when:
+    - inventory_hostname in groups['rabbitmq_joiner']
+    - not rabbitmq_rc1.stat.exists

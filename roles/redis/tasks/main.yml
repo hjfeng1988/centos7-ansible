@@ -1,0 +1,87 @@
+---
+# tasks file for redis
+
+- name: copy to /opt/src/redis-4.0.9-linux.tar.gz
+  copy:
+    src: redis-4.0.9-linux.tar.gz
+    dest: /opt/src/redis-4.0.9-linux.tar.gz
+
+- name: unarchive redis to /opt/redis
+  shell:
+    cmd: |
+      cd /opt/src
+      tar zxf redis-4.0.9-linux.tar.gz
+      mv redis /opt/redis
+  args:
+    creates: /opt/redis  
+
+- name: check if redis.log exists
+  stat:
+    path: /opt/redis/redis.log
+  register: redis_server_rc1
+
+- name: modify redis.conf bind
+  lineinfile:
+    path: /opt/redis/redis.conf
+    regexp: '^bind 127.0.0.1'
+    line: 'bind 0.0.0.0'
+  when:
+    - not redis_server_rc1.stat.exists
+
+- name: modify redis.conf daemonize
+  lineinfile:
+    path: /opt/redis/redis.conf
+    regexp: 'daemonize no'
+    line: 'daemonize yes'
+  when:
+    - not redis_server_rc1.stat.exists
+
+- name: modify redis.conf dir
+  lineinfile:
+    path: /opt/redis/redis.conf
+    regexp: 'dir ./'
+    line: 'dir /opt/redis'
+  when:
+    - not redis_server_rc1.stat.exists
+
+- name: modify redis.conf logfile
+  lineinfile:
+    path: /opt/redis/redis.conf
+    regexp: 'logfile ""'
+    line: 'logfile "/opt/redis/redis.log"'
+  when:
+    - not redis_server_rc1.stat.exists
+
+- name: add password to redis.conf
+  blockinfile:
+    path: /opt/redis/redis.conf
+    block: |
+      requirepass {{redis_pass}}
+      masterauth {{redis_pass}}
+  when:
+    - not redis_server_rc1.stat.exists
+
+- name: add slaveof to redis.conf 
+  lineinfile:
+    path: /opt/redis/redis.conf
+    line: "slaveof {{groups['redis_master'][0]}} 6379"
+  when:
+    - inventory_hostname in groups ['redis_slave']
+    - not redis_server_rc1.stat.exists
+
+- import_tasks: optimize.yml
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: check if redis-server process is running
+  shell: ps -ef | grep -c redis-server
+  register: redis_server_rc2
+
+- name: start redis
+  shell:
+    cmd: /opt/redis/bin/redis-server /opt/redis/redis.conf
+  when:
+    - redis_server_rc2.stdout == '2'
+
+- import_tasks: sentinel.yml

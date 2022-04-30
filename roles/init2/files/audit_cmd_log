@@ -1,0 +1,8 @@
+/var/log/cmd.log {
+    create 600 root root
+    monthly
+    rotate 12
+    missingok
+    notifempty
+    copytruncate
+}

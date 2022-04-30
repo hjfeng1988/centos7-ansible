@@ -1,0 +1,8 @@
+---
+- hosts: all
+  user: root
+  gather_facts: no
+  tasks:
+    - name: set hostname
+      hostname:
+        name: "{{hostname}}"

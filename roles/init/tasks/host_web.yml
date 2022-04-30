@@ -1,0 +1,10 @@
+- name: create directory
+  file:
+    path: /opt/{{ item }}
+    state: directory
+    owner: appman
+    group: appman
+    mode: 0755
+  with_items:
+    - app
+    - start

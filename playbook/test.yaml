@@ -1,0 +1,9 @@
+---
+- hosts: all
+  user: root
+  gather_facts: yes
+  tasks:
+    - name: debug1
+      debug:
+        msg: "{{ ansible_facts.['devices'] | dict2items }}"
+      when: "'sdb' in ( ansible_facts['devices'] | list )"

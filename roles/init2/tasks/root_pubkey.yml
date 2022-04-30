@@ -1,0 +1,5 @@
+- name: set root public key
+  authorized_key:
+    user: root
+    state: present
+    key: "{{lookup('file', 'root.pub')}}"

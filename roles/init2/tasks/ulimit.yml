@@ -1,0 +1,4 @@
+- name: copy to /etc/security/limits.d
+  copy:
+    src: 20-nproc.conf
+    dest: /etc/security/limits.d
