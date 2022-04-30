@@ -1,9 +1,0 @@
----
-# tasks file for web
-- name: web task1
-  shell:
-    cmd: echo web task1
-
-- name: web task2
-  shell:
-    cmd: echo web task2

@@ -7,3 +7,8 @@
       debug:
         #msg: "{{groups['rabbitmq_main'][0]}}"
         msg: " {{ hostvars[groups['rabbitmq_main'][0]].hostname }} "
+
+    - name: debug1
+      debug:
+        msg: "{{ ansible_facts.['devices'] | dict2items }}"
+      when: "'sdb' in ( ansible_facts['devices'] | list )"
