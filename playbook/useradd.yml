@@ -17,3 +17,10 @@
       when:
         - sudo is defined
         - sudo == "yes"
+    - name: remove sudo from new_user
+      file:
+        path: /etc/sudoers.d/{{ user }}
+        state: absent
+      when: >
+        sudo is not defined or
+        sudo == "no"

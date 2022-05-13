@@ -1,6 +1,6 @@
 ---
 - name: install jdk play
-  hosts: jenkins
+  hosts: jenkins,app
   gather_facts: no
   user: appman
   become: yes
