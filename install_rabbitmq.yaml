@@ -1,6 +1,6 @@
 ---
 - name: install rabbitmq play
-  hosts: rabbitmq
+  hosts: rabbitmq_main,rabbitmq_joiner
   gather_facts: no
   user: appman
   roles:

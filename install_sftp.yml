@@ -1,0 +1,6 @@
+---
+- name: install sftp play
+  hosts: sftp
+  gather_facts: no
+  roles:
+    - sftp

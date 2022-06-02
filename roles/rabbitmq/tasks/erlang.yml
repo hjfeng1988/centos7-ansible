@@ -17,7 +17,7 @@
   args:
     creates: /usr/local/erlang
 
-- name: set PATH
+- name: set erlang PATH
   lineinfile:
     path: /etc/profile.d/erlang.sh
     line: "PATH=$PATH:/usr/local/erlang/bin"

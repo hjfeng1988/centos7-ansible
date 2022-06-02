@@ -18,7 +18,7 @@
       echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
 # optimize 2
-- name: add line in /etc/sysctl.d/91-redis.conf
+- name: touch /etc/sysctl.d/91-redis.conf and add line
   lineinfile:
     path: /etc/sysctl.d/91-redis.conf
     line: "vm.overcommit_memory = 1"
@@ -28,8 +28,9 @@
   shell:
     cmd: sysctl -p /etc/sysctl.d/91-redis.conf
 
-- name: set PATH
+- name: set redis PATH
   lineinfile:
     path: /etc/profile.d/redis.sh
     line: "PATH=$PATH:/opt/redis/bin"
     create: yes
+

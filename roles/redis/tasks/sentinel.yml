@@ -3,7 +3,7 @@
     path: /opt/redis/sentinel.log
   register: redis_sentinel_rc1
 
-- name: replace mymaster in sentinel.conf
+- name: modify sentinel.conf mymaster
   replace:
     path: /opt/redis/sentinel.conf
     regexp: "mymaster 127.0.0.1"

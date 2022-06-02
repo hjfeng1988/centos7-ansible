@@ -21,34 +21,34 @@
   register: redis_server_rc1
 
 - name: modify redis.conf bind
-  lineinfile:
+  replace:
     path: /opt/redis/redis.conf
     regexp: '^bind 127.0.0.1'
-    line: 'bind 0.0.0.0'
+    replace: 'bind 0.0.0.0'
   when:
     - not redis_server_rc1.stat.exists
 
 - name: modify redis.conf daemonize
-  lineinfile:
+  replace:
     path: /opt/redis/redis.conf
     regexp: 'daemonize no'
-    line: 'daemonize yes'
+    replace: 'daemonize yes'
   when:
     - not redis_server_rc1.stat.exists
 
 - name: modify redis.conf dir
-  lineinfile:
+  replace:
     path: /opt/redis/redis.conf
     regexp: 'dir ./'
-    line: 'dir /opt/redis'
+    replace: 'dir /opt/redis'
   when:
     - not redis_server_rc1.stat.exists
 
 - name: modify redis.conf logfile
-  lineinfile:
+  replace:
     path: /opt/redis/redis.conf
     regexp: 'logfile ""'
-    line: 'logfile "/opt/redis/redis.log"'
+    replace: 'logfile "/opt/redis/redis.log"'
   when:
     - not redis_server_rc1.stat.exists
 
