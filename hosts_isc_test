@@ -1,0 +1,35 @@
+[db]
+10.228.239.30 hostname=isc-dev-db-01
+
+[base_01]
+10.228.239.31 hostname=isc-dev-base-01
+
+[base_0203]
+10.228.239.32 hostname=isc-dev-base-02
+10.228.239.33 hostname=isc-dev-base-03
+
+[redis_master:children]
+base_01
+
+[redis_slave:children]
+base_0203
+
+[rabbitmq_main:children]
+base_01
+
+[rabbitmq_joiner:children]
+base_0203
+
+[redis_master:vars]
+redis_pass=yourpass
+
+[redis_slave:vars]
+redis_pass=yourpass
+
+[rabbitmq_main:vars]
+rabbitmq_user=admin
+rabbitmq_pass=yourpass
+
+[rabbitmq_joiner:vars]
+rabbitmq_user=admin
+rabbitmq_pass=yourpass
